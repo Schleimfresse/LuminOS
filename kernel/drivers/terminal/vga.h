@@ -5,6 +5,7 @@
 #ifndef VGA_DRIVER_H
 #define VGA_DRIVER_H
 #include <stddef.h>
+#include <stdint.h>
 
 // Hardware text mode color constants.
 enum vga_color {
@@ -29,7 +30,14 @@ enum vga_color {
 // Function to write a null-terminated string to the terminal
 void terminal_print(const char* data);
 
+void terminal_println(const char* data);
+
 // Function to initialize the vga-driver
 void terminal_initialize(void);
 
-#endif //VGA_DRIVER_H
+// Function to convert a number to hexadecimal string
+void terminal_print_hex(uint32_t hex);
+
+void terminal_print_dec(int32_t dec);
+
+#endif /* VGA_DRIVER_H */

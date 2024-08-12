@@ -1,3 +1,9 @@
+//
+// Created by linus on 10.08.24.
+//
+/*
+* Legacy
+*/
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -75,7 +81,56 @@ void terminal_write(const char* data, size_t size)
 		terminal_putchar(data[i]);
 }
 
+// Function to convert a number to hexadecimal string
+void terminal_print_hex(uint32_t num)
+{
+    const char hex_chars[] = "0123456789ABCDEF";
+    char buf[9]; // 8 hex digits + null terminator
+    buf[8] = '\0'; // null terminator
+    for (int i = 7; i >= 0; --i) {
+        buf[i] = hex_chars[num & 0xF];
+        num >>= 4;
+    }
+    terminal_print(buf); // Assuming terminal_print prints a null-terminated string
+}
+
+void terminal_print_dec(int32_t num) {
+    char buf[12];
+    char* p = buf + sizeof(buf) - 1; // Start at the end of the buffer
+    bool negative = false;
+
+    *p = '\0'; // Null-terminate the buffer
+
+    if (num < 0) {
+        negative = true;
+        num = -num;
+    }
+
+    do {
+        *(--p) = '0' + (num % 10); // Extract last digit and convert to char
+        num /= 10;
+    } while (num > 0);
+
+    if (negative) {
+        *(--p) = '-';
+    }
+
+    terminal_write(p, buf + sizeof(buf) - p);
+}
+
 void terminal_print(const char* data)
 {
 	terminal_write(data, strlen(data));
+}
+
+void terminal_println(const char* data)
+{
+	size_t length = strlen(data);
+    char buffer[length + 1];
+
+    for (size_t i = 0; i < length; ++i) {
+        buffer[i] = data[i];
+    }
+    buffer[length] = '\n';
+    terminal_write(buffer, length + 1);
 }

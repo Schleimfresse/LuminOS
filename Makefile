@@ -13,7 +13,7 @@ KERNEL_O = kernel/kernel.o
 LINKER_SCRIPT = linker.ld
 GRUB_CFG = grub.cfg
 DRIVER_DIR = kernel/drivers
-all: check_multiboot create_iso
+all: check_multiboot create_iso clean
 
 # Assemble the bootloader
 $(BOOT_DIR)/boot.o: $(SRC_DIR)/boot.s
