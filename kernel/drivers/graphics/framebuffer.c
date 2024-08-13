@@ -2,21 +2,21 @@
 // Created by linus on 11.08.2024.
 //
 
-#include "framebuffer.h"
 #include "../../include/multiboot.h"
 #include "../terminal/vga.h"
+#include <stdint.h>
 
-unsigned int *framebuffer_base;
-unsigned int framebuffer_width;
-unsigned int framebuffer_height;
-unsigned int framebuffer_pitch;
-unsigned int framebuffer_bpp;
+multiboot_uint64_t framebuffer_base;
+multiboot_uint32_t framebuffer_width;
+multiboot_uint32_t framebuffer_height;
+multiboot_uint32_t framebuffer_pitch;
+multiboot_uint8_t framebuffer_bpp;
 
 extern multiboot_info_t *multiboot_info;
 
 void initialize_framebuffer() {
     if (multiboot_info->flags & MULTIBOOT_INFO_FRAMEBUFFER_INFO) {
-        framebuffer_base = (unsigned int *)multiboot_info->framebuffer_addr;
+        framebuffer_base = multiboot_info->framebuffer_addr;
         framebuffer_width = multiboot_info->framebuffer_width;
         framebuffer_height = multiboot_info->framebuffer_height;
         framebuffer_pitch = multiboot_info->framebuffer_pitch;
@@ -34,7 +34,9 @@ void initialize_framebuffer() {
         terminal_print_dec(framebuffer_pitch);
         terminal_print("\nBpp: ");
         terminal_print_dec(framebuffer_bpp);
-
+		int *ptr = (int *)MULTIBOOT_INFO_BOOTDEV;
+		int value = *ptr;
+		terminal_print_dec(value);
         // Optional: Clear the framebuffer or draw something
         // clear_screen();
     } else {
@@ -43,8 +45,15 @@ void initialize_framebuffer() {
     }
 }
 
-/*void draw_pixel(int x, int y, unsigned int color) {
-    if (x < 0 || x >= framebuffer_width || y < 0 || y >= framebuffer_height) return;
-    unsigned int *pixel = (unsigned int *)((uintptr_t)framebuffer_base + y * framebuffer_pitch + x * (framebuffer_bpp / 8));
-    *pixel = color;
-}*/
+
+void set_pixel(int x, int y, uint16_t color) {
+	if (x >= 0 && x < framebuffer_width && y >= 0 && y < framebuffer_height) {
+		uint8_t *pixel = (uint8_t *)(uintptr_t)(multiboot_info->framebuffer_addr);
+
+		int pixel_offset = y * framebuffer_pitch + x * (framebuffer_bpp / 8);
+		// Write color to pixel location
+		*((uint16_t *)pixel) = color; // 16-bit color
+	} else {
+        terminal_println("Out of bounds");
+}
+}

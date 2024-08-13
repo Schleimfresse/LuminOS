@@ -24,6 +24,7 @@ $(BOOT_DIR)/boot.o: $(SRC_DIR)/boot.s
 kernel.o: $(KERNEL_SRC)
 	$(CC) -c $(KERNEL_SRC) -o $(KERNEL_O) -std=gnu99 -ffreestanding -O2 -Wall -Wextra
 
+
 drivers:
 	$(MAKE) -C $(DRIVER_DIR)
 

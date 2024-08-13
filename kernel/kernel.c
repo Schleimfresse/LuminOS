@@ -30,7 +30,7 @@ void kernel_main(multiboot_uint32_t magic, multiboot_info_t *info) {
 	initialize_framebuffer();
 
 	// Example: Draw a red pixel
-	//draw_pixel(100, 100, 0xFF0000);
+	set_pixel(20, 20, RGB565(255,0,0));
 
 	// Main kernel loop
 	while (1) {

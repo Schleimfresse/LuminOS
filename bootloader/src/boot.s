@@ -1,4 +1,5 @@
-# https://www.gnu.org/software/grub/manual/multiboot/multiboot.html#Boot-sources
+
+# https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html
 
 /* Declare constants for the multiboot header. */
 .set ALIGN,    1<<0             /* align loaded modules on page boundaries */
@@ -25,6 +26,7 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
+
     mov $stack_top, %esp     # Set up the stack pointer
 
     push %ebx                # Push Multiboot info pointer onto the stack

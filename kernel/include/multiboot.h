@@ -1,3 +1,5 @@
+/* multiboot.h - Multiboot header file. */
+
 #ifndef MULTIBOOT_HEADER
 #define MULTIBOOT_HEADER 1
 
