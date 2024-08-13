@@ -13,6 +13,7 @@ KERNEL_O = kernel/kernel.o
 LINKER_SCRIPT = linker.ld
 GRUB_CFG = grub.cfg
 DRIVER_DIR = kernel/drivers
+SYSTEM_DIR = kernel/system
 all: check_multiboot create_iso clean
 
 # Assemble the bootloader
@@ -28,16 +29,19 @@ kernel.o: $(KERNEL_SRC)
 drivers:
 	$(MAKE) -C $(DRIVER_DIR)
 
+system:
+	$(MAKE) -C $(SYSTEM_DIR)
+
 # Link the kernel and bootloader into a binary
-kernel.bin: $(BOOT_DIR)/boot.o kernel.o drivers
-	$(LD) -T $(LINKER_SCRIPT) -o $@ -ffreestanding -O2 -nostdlib $(BOOT_DIR)/boot.o $(KERNEL_O) $(shell find $(DRIVER_DIR) -name '*.o')
+kernel.bin: $(BOOT_DIR)/boot.o kernel.o system drivers
+	$(LD) -T $(LINKER_SCRIPT) -o $@ -ffreestanding -O2 -nostdlib $(BOOT_DIR)/boot.o $(KERNEL_O) $(shell find $(DRIVER_DIR) -name '*.o') $(shell find $(SYSTEM_DIR) -name '*.o')
 
 # Check if the kernel binary is multiboot
 check_multiboot: kernel.bin
-	@if $(GRUB_FILE) --is-x86-multiboot $<; then \
-	  echo "multiboot confirmed"; \
+	@if $(GRUB_FILE) --is-x86-multiboot2 $<; then \
+	  echo "multiboot2 confirmed"; \
 	else \
-	  echo "the file is not multiboot"; \
+	  echo "the file is not multiboot2"; \
 	fi
 
 # Prepare the ISO directory and create the ISO
@@ -53,6 +57,7 @@ clean:
 	rmdir $(BOOT_DIR)
 	rm -rf $(ISO_DIR)
 	$(MAKE) -C $(DRIVER_DIR) clean
+	$(MAKE) -C $(SYSTEM_DIR) clean
 
 # Clean up build artifacts
 remove:
