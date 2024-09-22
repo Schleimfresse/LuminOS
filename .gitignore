@@ -1,0 +1,13 @@
+LuminOS.iso
+.idea
+kernel/.idea
+.o
+legacy
+.vscode
+OVMF
+
+build
+
+PonchoOS
+gnu-efi/*
+!mydir/bootloader
