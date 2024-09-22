@@ -10,4 +10,10 @@ build
 
 PonchoOS
 gnu-efi/*
-!mydir/bootloader
+!gnu-efi/bootloader
+
+*.o
+*.so
+*.efi
+*.elf
+*.iso
