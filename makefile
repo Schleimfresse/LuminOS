@@ -1,6 +1,7 @@
 KERNEL_DIR = ./kernel
 LIB_DIR = ./lib
 BUILD_DIR = ./build
+# KERNEL_SRC = ./kernel/graphics/print.c ./kernel/kernel.c ./kernel/memory/bitmap.c ./kernel/memory/efi_memory.c ./kernel/memory/heap.c ./kernel/memory/memory.c ./lib/string.c
 KERNEL_SRC = $(shell find $(KERNEL_DIR) $(LIB_DIR) -name '*.c*' ! -path './gnu-efi/*')
 KERNEL_OBJ = $(KERNEL_SRC:.c=.o)
 KERNEL_ELF = $(BUILD_DIR)/kernel.elf
@@ -8,9 +9,9 @@ BOOTLOADER_EFI = gnu-efi/bootloader/boot.efi
 DISK_IMG = $(BUILD_DIR)/boot.img
 
 LDS = linker.ld
-CC = gcc
-LD = ld
-CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -fno-exceptions -pedantic -g
+CC = x86_64-elf-gcc
+LD = x86_64-elf-ld
+CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -fno-exceptions -pedantic -g -O0
 LDFLAGS = -T $(LDS) -static -Bsymbolic -nostdlib -g
 
 ISO = $(BUILD_DIR)/LuminOS.iso
@@ -58,5 +59,5 @@ test: $(ISO)
 # Clean up build artifacts
 clean:
 	$(MAKE) -C gnu-efi/bootloader clean
-	rm -f $(KERNEL_OBJ) $(KERNEL_ELF) $(DISK_IMG)
+	rm -f $(KERNEL_OBJ) $(KERNEL_ELF) $(DISK_IMG) $(ISO)
 	rm -f -r mnt

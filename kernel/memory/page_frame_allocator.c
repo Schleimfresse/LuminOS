@@ -7,11 +7,14 @@
 #include "../../include/graphics.h"
 #include "../include/io.h"
 #include "../include/memory.h"
+#include "../include/bitmap.h"
+
+
 /*
 void InitBitmap(struct PageFrameAllocator* self, size_t bitmapSize, void* bufferAddress);
 void LockPages(struct PageFrameAllocator* self, void* address, uint64_t pageCount);
 void ReservePages(struct PageFrameAllocator* self, void* address, uint64_t pageCount);
-void ReservePage(struct PageFrameAllocator* self, void* address);
+void ReservePage(struct PageFrameAllocator* self, void* address);*/
 
 uint64_t freeMem;
 uint64_t reservedMem;
@@ -144,4 +147,4 @@ PageFrameAllocator* InitPageFrameAllocator(PageFrameAllocator* allocator, EFI_ME
     allocator->GetReservedRAM = GetReservedRAM;
 
     return allocator;
-}*/
+}

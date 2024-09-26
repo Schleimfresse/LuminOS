@@ -4,9 +4,8 @@ kernel/.idea
 .o
 legacy
 .vscode
-OVMF
 
-build
+
 
 PonchoOS
 gnu-efi/*

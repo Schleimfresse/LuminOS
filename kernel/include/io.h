@@ -7,6 +7,6 @@
 #include <stdint.h>
 #define IO_H
 
-void Print(char* str, uint32_t color);
+extern void Print(char* str, uint32_t color);
 
 #endif //IO_H

@@ -50,10 +50,10 @@ void swap_buffers();
 extern Framebuffer* fb;
 extern PSF1_FONT* psf1_font;
 
-void SetCursorX(int32_t x);
-void SetCursorY(int32_t y);
-void SetCursor(int32_t x, int32_t y);
-void IncrementCursorX(int32_t x);
-void IncrementCursorY(int32_t y);
+extern void SetCursorX(int32_t x);
+extern void SetCursorY(int32_t y);
+extern void SetCursor(int32_t x, int32_t y);
+extern void IncrementCursorX(int32_t x);
+extern void IncrementCursorY(int32_t y);
 
 #endif //GRAHICS_H

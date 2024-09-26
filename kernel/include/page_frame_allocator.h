@@ -23,7 +23,21 @@ typedef struct PageFrameAllocator {
     uint64_t (*GetReservedRAM)(struct PageFrameAllocator* self);
 } PageFrameAllocator;
 
-extern PageFrameAllocator* InitPageFrameAllocator(PageFrameAllocator* allocator, EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapSize, size_t mMapDescSize);
+ PageFrameAllocator* InitPageFrameAllocator(PageFrameAllocator* allocator, EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapSize, size_t mMapDescSize);
+void ReadEFIMemoryMap(PageFrameAllocator* self, EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapSize, size_t mMapDescSize);
+ void LockPages(PageFrameAllocator* self, void* address, uint64_t pageCount);
+ void LockPage(PageFrameAllocator* self, void* address);
+ void FreePages(PageFrameAllocator* self, void* addresss, uint64_t pageCount);
+ void FreePage(PageFrameAllocator* self, void* address);
+ uint64_t GetFreeRAM(PageFrameAllocator* self);
+ uint64_t GetUsedRAM(PageFrameAllocator* self);
+ uint64_t GetReservedRAM(PageFrameAllocator* self);
+
+void InitBitmap(PageFrameAllocator* self, size_t bitmapSize, void* bufferAddress);
+void UnreservePages(PageFrameAllocator* self, void* addresss, uint64_t pageCount);
+void UnreservePages(PageFrameAllocator* self, void* addresss, uint64_t pageCount);
+void ReservePage(PageFrameAllocator* self, void* address);
+void ReservePages(PageFrameAllocator* self, void* addresss, uint64_t pageCount);
 
 
 #endif // PAGE_FRAME_ALLOCATOR_H

@@ -2,7 +2,7 @@
 #include "./include/heap.h"
 #include "./include/memory.h"
 #include "./include/bitmap.h"
-//#include "./include/page_frame_allocator.h"
+#include "./include/page_frame_allocator.h"
 #include "./include/io.h"
 #include "../include/string.h"
 #include <stdint.h>
@@ -55,33 +55,9 @@ void init_back_buffer() {
 
 
 
-typedef struct PageFrameAllocator {
-    Bitmap PageBitmap;
-
-    void (*ReadEFIMemoryMap)(struct PageFrameAllocator* self, EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapSize, size_t mMapDescSize);
-    void (*FreePage)(struct PageFrameAllocator* self, void* address);
-    void (*FreePages)(struct PageFrameAllocator* self, void* address, uint64_t pageCount);
-    void (*LockPage)(struct PageFrameAllocator* self, void* address);
-    void (*LockPages)(struct PageFrameAllocator* self, void* address, uint64_t pageCount);
-    void* (*RequestPage)(struct PageFrameAllocator* self);
-    uint64_t (*GetFreeRAM)(struct PageFrameAllocator* self);
-    uint64_t (*GetUsedRAM)(struct PageFrameAllocator* self);
-    uint64_t (*GetReservedRAM)(struct PageFrameAllocator* self);
-} PageFrameAllocator;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+/*
 
 
 
@@ -226,8 +202,7 @@ PageFrameAllocator* InitPageFrameAllocator(PageFrameAllocator* allocator, EFI_ME
 
 
 
-
-
+*/
 
 
 
@@ -318,6 +293,10 @@ void kernel_main(BootInfo* bootInfo) {
     Print("Total RAM:", WHITE);
     Print(to_string((GetReservedRAM(pfa_ptr) + GetFreeRAM(pfa_ptr) + GetUsedRAM(pfa_ptr)) / 1024 / 1024), CYAN);
     Print(" KB ", WHITE);
+
+    IncrementCursorY(16);
+    SetCursorX(0);
+    Print("Test securit h", RED);
 
     __asm__ volatile("int3"); 
 
