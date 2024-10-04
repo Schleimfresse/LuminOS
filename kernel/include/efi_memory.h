@@ -4,16 +4,15 @@
 
 #ifndef EFI_MEMORY_H
 #define EFI_MEMORY_H
-#include <stddef.h>
 #include <stdint.h>
 
-typedef struct {
+struct EFI_MEMORY_DESCRIPTOR {
     uint32_t type;
     void* physAddr;
-    void* virtAddr;
+    void* virtAddr; 
     uint64_t numPages;
-    uint64_t attributes;
-} EFI_MEMORY_DESCRIPTOR;
+    uint64_t attribs;
+};
 
 extern const char* EFI_MEMORY_TYPE_STRINGS[];
 #endif //EFI_MEMORY_H

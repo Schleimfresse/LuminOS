@@ -5,16 +5,14 @@
 #ifndef BITMAP_H
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
 #define BITMAP_H
 
-typedef struct
-{
-    size_t size;
-    uint8_t *Buffer;
-} Bitmap;
-
-bool Bitmap_Get(Bitmap* bitmap, uint64_t index);
-void Bitmap_Set(Bitmap* bitmap, uint64_t index, bool value);
+class Bitmap{
+    public:
+    size_t Size;
+    uint8_t* Buffer;
+    bool operator[](uint64_t index);
+    bool Set(uint64_t index, bool value);
+};
 
 #endif //BITMAP_H

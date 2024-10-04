@@ -1,18 +1,17 @@
 KERNEL_DIR = ./kernel
 LIB_DIR = ./lib
 BUILD_DIR = ./build
-# KERNEL_SRC = ./kernel/graphics/print.c ./kernel/kernel.c ./kernel/memory/bitmap.c ./kernel/memory/efi_memory.c ./kernel/memory/heap.c ./kernel/memory/memory.c ./lib/string.c
-KERNEL_SRC = $(shell find $(KERNEL_DIR) $(LIB_DIR) -name '*.c*' ! -path './gnu-efi/*')
-KERNEL_OBJ = $(KERNEL_SRC:.c=.o)
+KERNEL_SRC = $(shell find $(KERNEL_DIR) $(LIB_DIR) -name '*.cpp*' ! -path './gnu-efi/*')
+KERNEL_OBJ = $(KERNEL_SRC:.cpp=.o)
 KERNEL_ELF = $(BUILD_DIR)/kernel.elf
 BOOTLOADER_EFI = gnu-efi/bootloader/boot.efi
 DISK_IMG = $(BUILD_DIR)/boot.img
 
 LDS = linker.ld
-CC = x86_64-elf-gcc
-LD = x86_64-elf-ld
+CC = gcc	
+LD = ld
 CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -fno-exceptions -pedantic -g -O0
-LDFLAGS = -T $(LDS) -static -Bsymbolic -nostdlib -g
+LDFLAGS = -T $(LDS) -Bsymbolic -nostdlib -g
 
 ISO = $(BUILD_DIR)/LuminOS.iso
 MKFS_FAT = mkfs.fat
@@ -27,7 +26,7 @@ bootloader:
 	$(MAKE) -C gnu-efi/bootloader
 
 # Compile the kernel C file into an object file
-%.o: %.c
+%.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Link all object files into the final ELF binary
@@ -44,7 +43,7 @@ $(DISK_IMG): bootloader $(KERNEL_ELF)
 	sudo mkdir -p $(EFI_DIR)
 	sudo cp $(BOOTLOADER_EFI) $(EFI_DIR)/BOOTX64.EFI
 	sudo cp $(KERNEL_ELF) $(EFI_DIR)/kernel.elf
-	sudo cp build/zap-vga16.psf mnt/zap-vga16.psf
+	sudo cp build/zap-light16.psf mnt/zap-light16.psf
 	sudo cp $(BUILD_DIR)/startup.nsh mnt/
 	sudo umount mnt
 	$(RM) -r mnt

@@ -1,7 +1,6 @@
 //
 // Created by linus on 20.09.24.
 //
-
 #ifndef PAGE_FRAME_ALLOCATOR_H
 #define PAGE_FRAME_ALLOCATOR_H
 #include "efi_memory.h"
@@ -9,35 +8,29 @@
 #include "bitmap.h"
 #include "memory.h"
 
-typedef struct PageFrameAllocator {
+class PageFrameAllocator {
+    public:
+    void ReadEFIMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapSize, size_t mMapDescSize);
     Bitmap PageBitmap;
+    void FreePage(void* address);
+    void FreePages(void* address, uint64_t pageCount);
+    void LockPage(void* address);
+    void LockPages(void* address, uint64_t pageCount);
+    void* RequestPage();
+    uint64_t GetFreeRAM();
+    uint64_t GetUsedRAM();
+    uint64_t GetReservedRAM();
 
-    void (*ReadEFIMemoryMap)(struct PageFrameAllocator* self, EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapSize, size_t mMapDescSize);
-    void (*FreePage)(struct PageFrameAllocator* self, void* address);
-    void (*FreePages)(struct PageFrameAllocator* self, void* address, uint64_t pageCount);
-    void (*LockPage)(struct PageFrameAllocator* self, void* address);
-    void (*LockPages)(struct PageFrameAllocator* self, void* address, uint64_t pageCount);
-    void* (*RequestPage)(struct PageFrameAllocator* self);
-    uint64_t (*GetFreeRAM)(struct PageFrameAllocator* self);
-    uint64_t (*GetUsedRAM)(struct PageFrameAllocator* self);
-    uint64_t (*GetReservedRAM)(struct PageFrameAllocator* self);
-} PageFrameAllocator;
 
- PageFrameAllocator* InitPageFrameAllocator(PageFrameAllocator* allocator, EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapSize, size_t mMapDescSize);
-void ReadEFIMemoryMap(PageFrameAllocator* self, EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapSize, size_t mMapDescSize);
- void LockPages(PageFrameAllocator* self, void* address, uint64_t pageCount);
- void LockPage(PageFrameAllocator* self, void* address);
- void FreePages(PageFrameAllocator* self, void* addresss, uint64_t pageCount);
- void FreePage(PageFrameAllocator* self, void* address);
- uint64_t GetFreeRAM(PageFrameAllocator* self);
- uint64_t GetUsedRAM(PageFrameAllocator* self);
- uint64_t GetReservedRAM(PageFrameAllocator* self);
+    private:
+    void InitBitmap(size_t bitmapSize, void* bufferAddress);
+    void ReservePage(void* address);
+    void ReservePages(void* address, uint64_t pageCount);
+    void UnreservePage(void* address);
+    void UnreservePages(void* address, uint64_t pageCount);
 
-void InitBitmap(PageFrameAllocator* self, size_t bitmapSize, void* bufferAddress);
-void UnreservePages(PageFrameAllocator* self, void* addresss, uint64_t pageCount);
-void UnreservePages(PageFrameAllocator* self, void* addresss, uint64_t pageCount);
-void ReservePage(PageFrameAllocator* self, void* address);
-void ReservePages(PageFrameAllocator* self, void* addresss, uint64_t pageCount);
+};
 
+extern PageFrameAllocator globalAllocator;
 
 #endif // PAGE_FRAME_ALLOCATOR_H

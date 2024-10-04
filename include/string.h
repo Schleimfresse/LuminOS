@@ -4,10 +4,15 @@
 
 #ifndef STRING_H
 #define STRING_H
-#include <stddef.h>
+#include <stdint.h>
 
-void *memset (void *dest, int val, size_t len);
-void *memcpy (void *dest, const void *src, size_t len);
-char* to_string(size_t value);
+extern const char* to_string(uint64_t value);
+extern const char* to_string(int64_t value);
+extern const char* to_hstring(uint64_t value);
+extern const char* to_hstring(uint32_t value);
+extern const char* to_hstring(uint16_t value);
+extern const char* to_hstring(uint8_t value);
+extern const char* to_string(double value, uint8_t decimalPlaces);
+extern const char* to_string(double value);
 
 #endif //STRING_H

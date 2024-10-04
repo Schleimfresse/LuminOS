@@ -198,7 +198,7 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SysTbl) {
 
     InitializeGOP();
 
-	PSF1_FONT* font = LoadPSF1Font(NULL, L"zap-vga16.psf", ImageHandle, SysTbl);
+	PSF1_FONT* font = LoadPSF1Font(NULL, L"zap-light16.psf", ImageHandle, SysTbl);
 	if (font == NULL) {
 		Print(L"Font invalid or not found");
 	} else {
