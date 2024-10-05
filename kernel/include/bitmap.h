@@ -9,10 +9,10 @@
 
 class Bitmap{
     public:
-    size_t Size;
-    uint8_t* Buffer;
+    size_t size;
+    uint8_t* buffer;
     bool operator[](uint64_t index);
-    bool Set(uint64_t index, bool value);
+    bool set(uint64_t index, bool value);
 };
 
 #endif //BITMAP_H

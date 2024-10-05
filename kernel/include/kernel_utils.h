@@ -15,6 +15,8 @@
 #include "page_map_indexer.h"
 #include "paging.h"
 #include "page_table_manager.h"
+#include "../../drivers/io/io.h"
+#include "../../drivers/input/mouse.h"
 
 struct BootInfo {
 	Framebuffer* framebuffer;
@@ -31,6 +33,6 @@ struct KernelInfo {
 	PageTableManager* page_table_manager;
 };
 
-KernelInfo InitializeKernel(BootInfo* BootInfo);
+KernelInfo initialize_kernel(BootInfo* BootInfo);
 
 #endif //KERNEL_UTILS_H

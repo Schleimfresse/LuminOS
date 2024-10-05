@@ -7,28 +7,30 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define BLACK   0x00000000
-#define WHITE   0x00FFFFFF
-#define RED     0x00FF0000
-#define GREEN   0x0000FF00
-#define BLUE    0x000000FF
-#define YELLOW  0x00FFFF00
-#define CYAN    0x0000FFFF
-#define MAGENTA 0x00FF00FF
-#define ORANGE  0x0000A5FF // CYAN
-#define GRAY    0x00808080
+typedef enum {
+    BLACK   = 0x00000000,
+    WHITE   = 0x00FFFFFF,
+    RED     = 0x00FF0000,
+    GREEN   = 0x0000FF00,
+    BLUE    = 0x000000FF,
+    YELLOW  = 0x00FFFF00,
+    CYAN    = 0x0000FFFF,
+    MAGENTA = 0x00FF00FF,
+    ORANGE  = 0x0000A5FF,
+    GRAY    = 0x00808080
+} Colour;
 
 typedef struct {
-	void* BaseAddress;
-	size_t BufferSize;
-	uint32_t Width;
-	uint32_t Height;
-	uint32_t PixelsPerScanLine;
+	void* base_address;
+	size_t buffer_size;
+	uint32_t width;
+	uint32_t height;
+	uint32_t pixels_per_scanline;
 } Framebuffer;
 
 typedef struct {
-    uint32_t X;
-    uint32_t Y;
+    long X;
+    long Y;
 } Point;
 
 #define PSF1_MAGIC0 0x36

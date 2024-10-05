@@ -7,6 +7,6 @@
 #include <stdint.h>
 #include "efi_memory.h"
 
-uint64_t GetMemorySize(EFI_MEMORY_DESCRIPTOR* mMap, uint64_t mMapEntries, uint64_t mMapDescSize);
+uint64_t get_memory_size(EFI_MEMORY_DESCRIPTOR* mMap, uint64_t mMapEntries, uint64_t mMapDescSize);
 void memset(void* dest, uint8_t val, uint64_t num);
 #endif //MEMORY_H

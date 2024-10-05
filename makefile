@@ -1,16 +1,20 @@
-KERNEL_DIR = ./kernel
-LIB_DIR = ./lib
 BUILD_DIR = ./build
-KERNEL_SRC = $(shell find $(KERNEL_DIR) $(LIB_DIR) -name '*.cpp*' ! -path './gnu-efi/*')
-KERNEL_OBJ = $(KERNEL_SRC:.cpp=.o)
+ASM_SRC = $(shell find ./ -name '*.asm' ! -path './gnu-efi/*')
+KERNEL_SRC = $(shell find ./ -name '*.cpp*' ! -path './gnu-efi/*')
+
+OBJS = $(KERNEL_SRC:.cpp=.o)
+OBJS += $(ASM_SRC:.asm=_asm.o)
+
 KERNEL_ELF = $(BUILD_DIR)/kernel.elf
 BOOTLOADER_EFI = gnu-efi/bootloader/boot.efi
 DISK_IMG = $(BUILD_DIR)/boot.img
 
 LDS = linker.ld
-CC = gcc	
+ASM = nasm
+CC = gcc
 LD = ld
-CFLAGS = -ffreestanding -fshort-wchar -mno-red-zone -fno-exceptions -pedantic -g -O0
+CFLAGS = -ffreestanding -mno-red-zone -fshort-wchar -fno-exceptions -pedantic -g -O0
+ASMFLAGS = -f elf64
 LDFLAGS = -T $(LDS) -Bsymbolic -nostdlib -g
 
 ISO = $(BUILD_DIR)/LuminOS.iso
@@ -25,13 +29,19 @@ all: bootloader $(ISO) test clean
 bootloader:
 	$(MAKE) -C gnu-efi/bootloader
 
-# Compile the kernel C file into an object file
+./arch/x86_64/interrupts/interrupts.o: ./arch/x86_64/interrupts/interrupts.cpp
+	$(CC) -mno-red-zone -mgeneral-regs-only -ffreestanding -c $< -o $@
+
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# Compile the ASM files into _asm.o object files
+%_asm.o: %.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
 # Link all object files into the final ELF binary
-$(KERNEL_ELF): $(KERNEL_OBJ)
-	$(LD) $(LDFLAGS) -o $@ $(KERNEL_OBJ)
+$(KERNEL_ELF): $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS)
 
 # Create the FAT32 EFI System Partition image
 $(DISK_IMG): bootloader $(KERNEL_ELF)
@@ -54,9 +64,10 @@ $(ISO): $(DISK_IMG)
 
 # Test the ISO image with QEMU
 test: $(ISO)
-	qemu-system-x86_64 -cdrom $(ISO) -m 256M -cpu qemu64 -drive if=pflash,format=raw,unit=0,file="OVMF/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMF/OVMF_VARS-pure-efi.fd" -net none 	# qemu-system-x86_64 -drive if=pflash,format=raw,file="OVMF/OVMF.fd" -cdrom $(ISO)
+	qemu-system-x86_64 -cdrom $(ISO) -m 256M -cpu qemu64 -drive if=pflash,format=raw,unit=0,file="OVMF/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMF/OVMF_VARS-pure-efi.fd" -net none
+
 # Clean up build artifacts
 clean:
 	$(MAKE) -C gnu-efi/bootloader clean
-	rm -f $(KERNEL_OBJ) $(KERNEL_ELF) $(DISK_IMG) $(ISO)
+	rm -f $(OBJS) $(KERNEL_ELF) $(DISK_IMG) $(ISO)
 	rm -f -r mnt

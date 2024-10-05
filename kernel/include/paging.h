@@ -21,10 +21,10 @@ enum PT_Flag {
 
 struct PageDirectoryEntry {
     uint64_t Value;
-    void SetFlag(PT_Flag flag, bool enabled);
-    bool GetFlag(PT_Flag flag);
-    void SetAddress(uint64_t address);
-    uint64_t GetAddress();
+    void set_flag(PT_Flag flag, bool enabled);
+    bool get_flag(PT_Flag flag);
+    void set_address(uint64_t address);
+    uint64_t get_address();
 };
 
 struct PageTable { 

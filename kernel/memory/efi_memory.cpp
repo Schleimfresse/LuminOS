@@ -2,7 +2,7 @@
 
 const char* EFI_MEMORY_TYPE_STRINGS[] {
 
-    "EfiReservedMemoryType",
+    "Efireserved_memoryType",
     "EfiLoaderCode",
     "EfiLoaderData",
     "EfiBootServicesCode",

@@ -59,18 +59,18 @@ Framebuffer* InitializeGOP(){
 		Print(L"GOP located\n\r");
 	}
 
-	framebuffer.BaseAddress = (void*)gop->Mode->FrameBufferBase;
-	framebuffer.BufferSize = gop->Mode->FrameBufferSize;
-	framebuffer.Width = gop->Mode->Info->HorizontalResolution;
-	framebuffer.Height = gop->Mode->Info->VerticalResolution;
-	framebuffer.PixelsPerScanLine = gop->Mode->Info->PixelsPerScanLine;
+	framebuffer.base_address = (void*)gop->Mode->FrameBufferBase;
+	framebuffer.buffer_size = gop->Mode->FrameBufferSize;
+	framebuffer.width = gop->Mode->Info->HorizontalResolution;
+	framebuffer.height = gop->Mode->Info->VerticalResolution;
+	framebuffer.pixels_per_scanline = gop->Mode->Info->PixelsPerScanLine;
 
     Print(L"Framebuffer address %p size %d, width %d height %d pixelsperline %d\r\n",
-      framebuffer.BaseAddress,
-      framebuffer.BufferSize,
-      framebuffer.Width,
-      framebuffer.Height,
-	  framebuffer.PixelsPerScanLine
+      framebuffer.base_address,
+      framebuffer.buffer_size,
+      framebuffer.width,
+      framebuffer.height,
+	  framebuffer.pixels_per_scanline
     );
 
 	if (gop->Mode->Info->PixelFormat == PixelRedGreenBlueReserved8BitPerColor) {

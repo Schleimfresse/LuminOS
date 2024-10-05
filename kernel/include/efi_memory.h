@@ -8,9 +8,9 @@
 
 struct EFI_MEMORY_DESCRIPTOR {
     uint32_t type;
-    void* physAddr;
-    void* virtAddr; 
-    uint64_t numPages;
+    void* phys_addr;
+    void* virt_addr; 
+    uint64_t num_pages;
     uint64_t attribs;
 };
 

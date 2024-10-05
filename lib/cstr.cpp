@@ -1,4 +1,5 @@
 #include "../include/string.h"
+#include "stddef.h"
 
 char uintTo_StringOutput[128];
 const char* to_string(uint64_t value){
@@ -155,4 +156,12 @@ const char* to_string(double value, uint8_t decimalPlaces){
 
 const char* to_string(double value){
     return to_string(value, 2);
+}
+
+size_t strlen(const char *s) {
+    const char *start = s;
+    while (*s) {
+        ++s;
+    }
+    return s - start;
 }
