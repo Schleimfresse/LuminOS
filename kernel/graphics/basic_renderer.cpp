@@ -39,6 +39,62 @@ void BasicRenderer::clear() {
     }
 }
 
+void BasicRenderer::put_pixel(uint32_t x, uint32_t y, Colour colour) {
+    *(uint32_t*)((uint64_t)TargetFramebuffer->base_address + (x*4) + (y * TargetFramebuffer->pixels_per_scanline * 4)) = colour;
+}
+
+Colour BasicRenderer::get_pixel(uint32_t x, uint32_t y) {
+    return *(Colour*)((uint64_t)TargetFramebuffer->base_address + (x*4) + (y * TargetFramebuffer->pixels_per_scanline * 4));
+}
+
+void BasicRenderer::clear_mouse_cursor(uint8_t* mouse_cursor, Point position) {
+    if (!mouse_drawn) return;
+
+    int32_t x_max = 16;
+    int32_t y_max = 16;
+    int32_t diffrence_x = TargetFramebuffer->width - position.X;
+    int32_t diffrence_y = TargetFramebuffer->height - position.Y;
+
+    if (diffrence_x < 16) x_max = diffrence_x;
+    if (diffrence_y < 16) y_max = diffrence_y;
+
+    for (int32_t y = 0; y < y_max; y++) {
+        for (int32_t x = 0; x < x_max; x++) {
+            int32_t bit = y * 16 + x;
+            int32_t byte = bit / 8;
+            if ((mouse_cursor[byte] & (0b10000000 >> (x % 8)))) {
+                if (get_pixel(position.X + x, position.Y + y) == mouse_cursor_buffer_after[x + y * 16]) {
+                    put_pixel(position.X + x, position.Y + y, mouse_cursor_buffer[x + y * 16]); 
+                }
+            }
+        }
+    }
+}
+
+void BasicRenderer::draw_overlay_mouse_cursor(uint8_t* mouse_cursor, Point position, Colour colour) {
+    int32_t x_max = 16;
+    int32_t y_max = 16;
+    int32_t diffrence_x = TargetFramebuffer->width - position.X;
+    int32_t diffrence_y = TargetFramebuffer->height - position.Y;
+
+    if (diffrence_x < 16) x_max = diffrence_x;
+    if (diffrence_y < 16) y_max = diffrence_y;
+
+    for (int32_t y = 0; y < y_max; y++) {
+        for (int32_t x = 0; x < x_max; x++) {
+            int32_t bit = y * 16 + x;
+            int32_t byte = bit / 8;
+            if ((mouse_cursor[byte] & (0b10000000 >> (x % 8)))) {
+                mouse_cursor_buffer[x + y * 16] = get_pixel(position.X + x, position.Y + y);
+                put_pixel(position.X + x, position.Y + y, colour);
+                mouse_cursor_buffer_after[x + y * 16] = get_pixel(position.X + x, position.Y + y);
+            }
+        }
+    }
+
+    mouse_drawn = true;
+}
+
 void BasicRenderer::clear_char() {
     if (cursor_position.X == 0) {
         cursor_position.X = TargetFramebuffer->width;

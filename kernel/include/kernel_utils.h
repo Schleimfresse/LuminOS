@@ -17,6 +17,8 @@
 #include "page_table_manager.h"
 #include "../../drivers/io/io.h"
 #include "../../drivers/input/mouse.h"
+#include "../acpi/acpi.h"
+#include "../pci/pci.h"
 
 struct BootInfo {
 	Framebuffer* framebuffer;
@@ -24,7 +26,8 @@ struct BootInfo {
 	EFI_MEMORY_DESCRIPTOR* mMap;
 	uint64_t mMapSize;
 	uint64_t mMapDescSize;
-} ;
+	ACPI::RSDP2* rsdp;
+};
 
 extern uint64_t _KernelStart;
 extern uint64_t _KernelEnd;

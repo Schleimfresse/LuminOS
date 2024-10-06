@@ -47,7 +47,7 @@ $(KERNEL_ELF): $(OBJS)
 $(DISK_IMG): bootloader $(KERNEL_ELF)
 	$(RM) $@
 	dd if=/dev/zero of=$@ bs=512 count=$(IMG_SIZE)
-	$(MKFS_FAT) -F 32 -n "UEFI BOOT" $@
+	$(MKFS_FAT) -F 32 -n "LuminOS" $@
 	mkdir -p $(EFI_DIR)
 	sudo mount -o loop $@ mnt
 	sudo mkdir -p $(EFI_DIR)
@@ -64,7 +64,7 @@ $(ISO): $(DISK_IMG)
 
 # Test the ISO image with QEMU
 test: $(ISO)
-	qemu-system-x86_64 -cdrom $(ISO) -m 256M -cpu qemu64 -drive if=pflash,format=raw,unit=0,file="OVMF/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMF/OVMF_VARS-pure-efi.fd" -net none
+	qemu-system-x86_64 -cdrom $(ISO) -m 32G -machine q35 -cpu qemu64 -drive if=pflash,format=raw,unit=0,file="OVMF/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="OVMF/OVMF_VARS-pure-efi.fd" -net none
 
 # Clean up build artifacts
 clean:

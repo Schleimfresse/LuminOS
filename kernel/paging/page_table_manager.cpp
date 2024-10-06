@@ -4,6 +4,8 @@
 #include "../include/memory.h"
 #include <stdint.h>
 
+PageTableManager global_page_table_manager = NULL;
+
 PageTableManager::PageTableManager(PageTable* PML4Address) {
     this->PML4 = PML4Address;
 }

@@ -13,4 +13,7 @@ class PageTableManager {
     void MapMemory(void* virtualMemory, void* physicalMemory);
 };
 
+extern PageTableManager global_page_table_manager ;
+
+
 #endif // PAGE_TABLE_MANAGER_H

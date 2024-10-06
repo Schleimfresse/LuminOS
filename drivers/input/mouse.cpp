@@ -1,5 +1,24 @@
 #include "mouse.h"
 
+uint8_t mouse_pointer[] = {
+    0b11111111, 0b11100000,
+    0b11111111, 0b10000000,
+    0b11111110, 0b00000000,
+    0b11111100, 0b00000000,
+    0b11111000, 0b00000000,
+    0b11110000, 0b00000000,
+    0b11100000, 0b00000000,
+    0b11000000, 0b00000000,
+    0b11000000, 0b00000000,
+    0b10000000, 0b00000000,
+    0b10000000, 0b00000000,
+    0b00000000, 0b00000000,
+    0b00000000, 0b00000000,
+    0b00000000, 0b00000000,
+    0b00000000, 0b00000000,
+    0b00000000, 0b00000000,
+}; // upgrade this
+
 void mouse_wait() {
     uint64_t timeout = 100000;
     while (timeout--) {    
@@ -34,10 +53,15 @@ uint8_t mouse_cycle = 0;
 uint8_t mouse_packet[4];
 bool mouse_packet_ready = false;
 Point mouse_position;
+Point mouse_position_old;
 void handle_ps2_mouse(uint8_t data) {
+
+    process_mouse_packet();
+    static bool skip = true;
+    if (skip) {skip = false; return;}
+
     switch (mouse_cycle) {
         case 0:
-            if (mouse_packet_ready) break;
             if (data & 0b00001000 == 0) break;
             mouse_packet[0] = data;
             mouse_cycle++;
@@ -103,12 +127,26 @@ void process_mouse_packet() {
         }
 
         if (mouse_position.X < 0) mouse_position.X = 0;
-        if (mouse_position.X > global_renderer->TargetFramebuffer->width-8) mouse_position.X = global_renderer->TargetFramebuffer->width-8;
+        if (mouse_position.X > global_renderer->TargetFramebuffer->width-1) mouse_position.X = global_renderer->TargetFramebuffer->width-1;
 
         if (mouse_position.Y < 0) mouse_position.Y = 0;
-        if (mouse_position.Y > global_renderer->TargetFramebuffer->height-16) mouse_position.Y = global_renderer->TargetFramebuffer->height-16;
+        if (mouse_position.Y > global_renderer->TargetFramebuffer->height-1) mouse_position.Y = global_renderer->TargetFramebuffer->height-1;
 
-        global_renderer->put_char('a', mouse_position.X, mouse_position.Y);
+        global_renderer->clear_mouse_cursor(mouse_pointer, mouse_position_old);
+        global_renderer->draw_overlay_mouse_cursor(mouse_pointer, mouse_position, Colour::WHITE);
+
+        if (mouse_packet[0] & PS2LeftButton) {
+
+        }
+        if (mouse_packet[0] & PS2MiddleButton) {
+
+        }
+        if (mouse_packet[0] & PS2RightButton) {
+
+        }
+        
+        mouse_packet_ready = false;
+        mouse_position_old = mouse_position;
 }
 
 void initialize_ps2_mouse() {

@@ -9,6 +9,7 @@ typedef struct {
 	EFI_MEMORY_DESCRIPTOR* mMap;
 	UINTN mMapSize;
 	UINTN mMapDescriptorSize;
+	VOID* rsdp;
 } BootInfo;
 
 #define KERNEL_PATH L"\\EFI\\BOOT\\kernel.elf"
@@ -43,6 +44,13 @@ int memcmp(const void* aptr, const void* bptr, size_t n){
 	}
 	return 0;
 }
+
+UINTN strcmp(CHAR8* a, CHAR8* b, UINTN length) {
+	for (UINTN i = 0; i < length; i++) {
+		if (*a != *b) return 0;
+	}
+	return 1;
+} 
 
 Framebuffer* InitializeGOP(){
 	EFI_GUID gopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
@@ -215,6 +223,19 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SysTbl) {
 		SysTbl->BootServices->GetMemoryMap(&MapSize, Map, &MapKey, &DescriptorSize, &DescriptorVersion);
 	}
 
+	EFI_CONFIGURATION_TABLE* config_table = ST->ConfigurationTable;
+	VOID* rsdp = NULL;
+	EFI_GUID Acpi2TableGuid = ACPI_20_TABLE_GUID;
+
+	for (UINTN index = 0; index < ST->NumberOfTableEntries; index++) {
+		if (CompareGuid(&config_table[index].VendorGuid, &Acpi2TableGuid)) {
+			if (strcmp((CHAR8*)"RSD PTR ", (CHAR8*)config_table->VendorTable, 8)) {
+				rsdp = (void*)config_table->VendorTable;
+			}
+		}
+		config_table++;
+	}
+
 	void (*kernel_start)(BootInfo*) = ((__attribute__((sysv_abi)) void (*)(BootInfo*))header.e_entry);
 
 	BootInfo bootInfo;
@@ -223,6 +244,8 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SysTbl) {
 	bootInfo.mMap = Map;
 	bootInfo.mMapSize = MapSize;
 	bootInfo.mMapDescriptorSize = DescriptorSize;
+	bootInfo.rsdp = rsdp;
+	// https://www.youtube.com/watch?v=wbsfyRY_Yoc comment
 
 	SysTbl->BootServices->ExitBootServices(ImageHandle, MapKey);
 

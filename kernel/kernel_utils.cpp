@@ -4,7 +4,8 @@
 #include "../arch/x86_64/interrupts/interrupts.h"
 
 KernelInfo kernelInfo;
-PageTableManager pageTableManager = NULL;
+
+
 void prepare_memory(BootInfo* bootInfo){
     uint64_t mMapEntries = bootInfo->mMapSize / bootInfo->mMapDescSize;
 
@@ -19,22 +20,22 @@ void prepare_memory(BootInfo* bootInfo){
     PageTable* PML4 = (PageTable*)global_allocator.request_page();
     memset(PML4, 0, 0x1000);
 
-    pageTableManager = PageTableManager(PML4);
+    global_page_table_manager = PageTableManager(PML4);
 
     for (uint64_t t = 0; t < get_memory_size(bootInfo->mMap, mMapEntries, bootInfo->mMapDescSize); t+= 0x1000){
-        pageTableManager.MapMemory((void*)t, (void*)t);
+        global_page_table_manager.MapMemory((void*)t, (void*)t);
     }
 
-    uint64_t fbBase = (uint64_t)bootInfo->framebuffer->base_address;
-    uint64_t fbSize = (uint64_t)bootInfo->framebuffer->buffer_size + 0x1000;
-    global_allocator.lock_pages((void*)fbBase, fbSize/ 0x1000 + 1);
-    for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
-        pageTableManager.MapMemory((void*)t, (void*)t);
+    uint64_t fb_base = (uint64_t)bootInfo->framebuffer->base_address;
+    uint64_t fb_size = (uint64_t)bootInfo->framebuffer->buffer_size + 0x1000;
+    global_allocator.lock_pages((void*)fb_base, fb_size/ 0x1000 + 1);
+    for (uint64_t t = fb_base; t < fb_base + fb_size; t += 4096){
+        global_page_table_manager.MapMemory((void*)t, (void*)t);
     }
 
     asm ("mov %0, %%cr3" : : "r" (PML4));
 
-    kernelInfo.page_table_manager = &pageTableManager;
+    kernelInfo.page_table_manager = &global_page_table_manager;
 }
 
 IDTR idtr;
@@ -60,6 +61,14 @@ void prepare_interrupts() {
     remap_pic();
 }
 
+void prepare_acpi(BootInfo* boot_info) {
+    ACPI::SDTHeader* xsdt = (ACPI::SDTHeader*)(boot_info->rsdp->xsdt_address);
+
+    ACPI::MCFGHeader* mcfg = (ACPI::MCFGHeader*)ACPI::find_table(xsdt, (char*)"MCFG");
+
+    PCI::enumerate_pci(mcfg);
+}
+
 BasicRenderer r = BasicRenderer(NULL, NULL);
 KernelInfo initialize_kernel(BootInfo* bootInfo){
     r = BasicRenderer(bootInfo->framebuffer, bootInfo->psf1_font);
@@ -80,6 +89,8 @@ KernelInfo initialize_kernel(BootInfo* bootInfo){
 
     outb(PIC1_DATA, 0b11111001);
     outb(PIC2_DATA, 0b11101111);
+
+    prepare_acpi(bootInfo);
 
     asm ("sti");
 
